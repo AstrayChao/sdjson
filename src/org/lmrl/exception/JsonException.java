@@ -6,13 +6,19 @@ package org.lmrl.exception;
  *
  * @author dxc
  **/
-public class JsonException extends Exception{
+public class JsonException extends Exception {
 
     protected String message;
 
-    public JsonException() {}
+    public JsonException() {
+    }
+
     public JsonException(String message) {
         this.message = message;
+    }
+
+    public String getMessage() {
+        return message;
     }
 
     @Override

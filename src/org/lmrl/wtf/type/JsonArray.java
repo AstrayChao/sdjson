@@ -1,4 +1,4 @@
-package org.lmrl.lib.type;
+package org.lmrl.wtf.type;
 
 /**
  * <p>
@@ -6,5 +6,6 @@ package org.lmrl.lib.type;
  *
  * @author dxc
  **/
-public class ArrayType {
+public class JsonArray {
+    // TODO
 }
