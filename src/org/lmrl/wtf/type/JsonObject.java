@@ -1,11 +1,13 @@
 package org.lmrl.wtf.type;
 
+import org.lmrl.exception.JsonException;
 import org.lmrl.utils.JsonUtils;
-import org.lmrl.wtf.JsonValue;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
+import java.util.function.BiConsumer;
 
 /**
  * <p>
@@ -15,13 +17,93 @@ import java.util.function.Function;
  **/
 public class JsonObject {
 
-    Map<String, JsonValue> rawObject = new HashMap<>();
+    private final Map<String, JsonValue> rawObject;
 
     public JsonObject() {
+        rawObject = new HashMap<>(0);
     }
 
     public JsonObject(Map<String, JsonValue> rawObject) {
         this.rawObject = rawObject;
+    }
+
+    // 考虑用Function或者Predicate去做统一的抽象, 但是使用太麻烦...故写多个版本的get函数
+    public int get(String key, int defaultValues) throws JsonException {
+        if (contains(key)) {
+            var value = get(key);
+            if (value.isNumber()) {
+                return value.asInteger();
+            } else {
+                return defaultValues;
+            }
+        } else {
+            return defaultValues;
+        }
+    }
+
+    public boolean get(String key, boolean defaultValues) throws JsonException {
+        if (contains(key)) {
+            var value = get(key);
+            if (value.isBoolean()) {
+                return value.asBoolean();
+            } else {
+                return defaultValues;
+            }
+        } else {
+            return defaultValues;
+        }
+    }
+
+    public long get(String pos, long defaultValue) throws JsonException {
+        if (contains(pos)) {
+            var value = get(pos);
+            if (value.isNumber()) {
+                return value.asLong();
+            } else {
+                return defaultValue;
+            }
+        } else {
+            return defaultValue;
+        }
+    }
+
+    public double get(String pos, double defaultValue) throws JsonException {
+        if (contains(pos)) {
+            var value = get(pos);
+            if (value.isNumber()) {
+                return value.asDouble();
+            } else {
+                return defaultValue;
+            }
+        } else {
+            return defaultValue;
+        }
+    }
+
+    public float get(String pos, float defaultValue) throws JsonException {
+        if (contains(pos)) {
+            var value = get(pos);
+            if (value.isNumber()) {
+                return value.asFloat();
+            } else {
+                return defaultValue;
+            }
+        } else {
+            return defaultValue;
+        }
+    }
+
+    public String get(String pos, String defaultValue) throws JsonException {
+        if (contains(pos)) {
+            var value = get(pos);
+            if (value.isString()) {
+                return value.asString();
+            } else {
+                return defaultValue;
+            }
+        } else {
+            return defaultValue;
+        }
     }
 
     public int size() {
@@ -48,48 +130,6 @@ public class JsonObject {
         return rawObject.put(key, values);
     }
 
-    /**
-     * public boolean get(String key, boolean defaultValue) throws JsonException {
-     * if (contains(key)) {
-     * JsonValue value = get(key);
-     * if (value.isBoolean()) {
-     * return value.asBoolean();
-     * } else {
-     * return defaultValue;
-     * }
-     * } else {
-     * return defaultValue;
-     * }
-     * }
-     * <p>
-     * public int get(String key, int defaultValue) throws JsonException {
-     * if (contains(key)) {
-     * JsonValue value = get(key);
-     * if (value.isNumber()) {
-     * return value.asInteger();
-     * } else {
-     * return defaultValue;
-     * }
-     * } else {
-     * return defaultValue;
-     * }
-     * }
-     */
-
-    public <T> T get(String key, T defaultValues, Function<JsonValue, T> function) {
-        if (contains(key)) {
-            JsonValue value = get(key);
-            return function.apply(value);
-//            if (predicate.test(value)) {
-//                return function.apply(value);
-//            } else {
-//                return defaultValues;
-//            }
-        } else {
-            return defaultValues;
-        }
-    }
-
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("{");
@@ -107,9 +147,41 @@ public class JsonObject {
         return sb.toString();
     }
 
-    public String format(boolean ordered, String shift, int shiftCount) {
-        // TODO
-        return "";
+    public String format() {
+        return format(true, "    ", 0);
+    }
+
+    public String format(boolean sorted, String shift, int shiftCount) {
+        StringBuilder str = new StringBuilder();
+        str.append("{");
+        BiConsumer<String, JsonValue> appendConsumer = (String key, JsonValue val) ->
+                str.append("\n")
+                        .append(String.valueOf(shift).repeat(Math.max(0, shiftCount + 1)))
+                        .append("\"").append(JsonUtils.unescapeString(key))
+                        .append("\": ").append(val.format(sorted, shift, shiftCount + 1)).append(",");
+        var iterator = rawObject.entrySet().iterator();
+        if (sorted) {
+            List<Map.Entry<String, JsonValue>> orderedData = new ArrayList<>();
+            while (iterator.hasNext()) {
+                orderedData.add(iterator.next());
+            }
+            orderedData.sort(Map.Entry.comparingByKey());
+            for (var it : orderedData) {
+                appendConsumer.accept(it.getKey(), it.getValue());
+            }
+        } else {
+            for (var entry : rawObject.entrySet()) {
+                appendConsumer.accept(entry.getKey(), entry.getValue());
+            }
+        }
+        if (str.charAt(str.length() - 1) == ',') {
+            str.deleteCharAt(str.length() - 1);
+        }
+        str.append("\n");
+        str.append(String.valueOf(shift).repeat(Math.max(0, shiftCount))).append("}");
+        return str.toString();
     }
 }
+
+
 
