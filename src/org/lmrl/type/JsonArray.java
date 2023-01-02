@@ -1,4 +1,4 @@
-package org.lmrl.wtf.type;
+package org.lmrl.type;
 
 import org.lmrl.exception.JsonException;
 

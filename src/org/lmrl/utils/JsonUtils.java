@@ -1,5 +1,8 @@
 package org.lmrl.utils;
 
+import org.lmrl.enums.ValueType;
+import org.lmrl.type.JsonValue;
+
 public class JsonUtils {
     public static String unescapeString(String s) {
         final StringBuilder b = new StringBuilder();
@@ -51,5 +54,22 @@ public class JsonUtils {
                 default -> c < ' ' ? String.format("\\u%04x", c) : c;
             });
         return sb.append('"').toString();
+    }
+
+    public static boolean isWhitespace(String content) {
+        for (char c : content.toCharArray()) {
+            switch (c) {
+                case ' ', '\t', '\n', 'r' -> {
+                }
+                default -> {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public static JsonValue invalidValue() {
+        return new JsonValue(ValueType.Invalid, null);
     }
 }

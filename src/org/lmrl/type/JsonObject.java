@@ -1,4 +1,4 @@
-package org.lmrl.wtf.type;
+package org.lmrl.type;
 
 import org.lmrl.exception.JsonException;
 import org.lmrl.utils.JsonUtils;
@@ -114,10 +114,6 @@ public class JsonObject {
         return rawObject.isEmpty();
     }
 
-    public boolean exists(String key) {
-        return contains(key);
-    }
-
     public boolean contains(String key) {
         return rawObject.containsKey(key);
     }
@@ -128,6 +124,14 @@ public class JsonObject {
 
     public JsonValue put(String key, JsonValue values) {
         return rawObject.put(key, values);
+    }
+
+    public void clear() {
+        rawObject.clear();
+    }
+
+    public void removeEntry(String key) {
+        rawObject.remove(key);
     }
 
     @Override

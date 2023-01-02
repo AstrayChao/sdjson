@@ -1,4 +1,4 @@
-package org.lmrl.wtf.type;
+package org.lmrl.type;
 
 import org.lmrl.enums.ValueType;
 import org.lmrl.exception.JsonException;
@@ -16,7 +16,13 @@ public class JsonValue {
     private Object rawData;
 
     public JsonValue() {
+        this.type = ValueType.Null;
+        rawData = null;
+    }
 
+    public JsonValue(ValueType type, Object rawData) {
+        this.type = type;
+        this.rawData = rawData;
     }
 
     public JsonValue(Boolean b) {
@@ -59,12 +65,9 @@ public class JsonValue {
         this.rawData = obj;
     }
 
+
     public ValueType type() {
         return type;
-    }
-
-    public boolean isObject() {
-        return type == ValueType.Object;
     }
 
     public JsonObject asObject() {
@@ -96,6 +99,14 @@ public class JsonValue {
 
     public JsonValue find(String key) throws JsonException {
         return isObject() ? asObject().get(key) : null;
+    }
+
+    public boolean isValid() {
+        return type != ValueType.Invalid;
+    }
+
+    public boolean isObject() {
+        return type == ValueType.Object;
     }
 
     public boolean isBoolean() {
