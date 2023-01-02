@@ -48,9 +48,6 @@ public class Parser {
         return value;
     }
 
-    private JsonValue parseObject() {
-        return null;
-    }
 
     public JsonValue parseValue() {
 
@@ -157,4 +154,10 @@ public class Parser {
         // TODO
         return null;
     }
+
+    private JsonValue parseObject() {
+        System.out.println();
+        return null;
+    }
+
 }
