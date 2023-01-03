@@ -22,13 +22,17 @@ public class JsonArray {
         arrayData = new ArrayList<>(size);
     }
 
-    public JsonArray(JsonValue value) throws JsonException {
+    public JsonArray(JsonValue value) {
         JsonArray jsonArray = value.asArray();
         this.arrayData = jsonArray.arrayData;
     }
 
     public JsonArray(List<JsonValue> arrayData) {
         this.arrayData = arrayData;
+    }
+
+    public List<JsonValue> toList() {
+        return arrayData;
     }
 
     public boolean empty() {
@@ -69,10 +73,8 @@ public class JsonArray {
             var value = arrayData.get(pos);
             if (value.isNumber()) {
                 return value.asInteger();
-
             } else {
                 return defaultValue;
-
             }
         } else {
             return defaultValue;
@@ -152,15 +154,19 @@ public class JsonArray {
         return str.toString();
     }
 
-    public String format(boolean ordered, String shift, int shiftCount) {
+    public String format() {
+        return format(false, "    ", 0);
+    }
+
+    public String format(boolean keySorted, String shift, int shiftCount) {
         StringBuilder str = new StringBuilder();
         str.append("[");
         for (var value : arrayData) {
             str.append("\n").append(String.valueOf(shift).repeat(Math.max(0, shiftCount + 1)))
-                    .append(value.format(ordered, shift, shiftCount + 1)).append(",");
+                    .append(value.format(keySorted, shift, shiftCount + 1)).append(",");
         }
         if (str.charAt(str.length() - 1) == ',') {
-            str.deleteCharAt(str.charAt(str.length() - 1));
+            str.deleteCharAt(str.length() - 1);
         }
         str.append("\n");
         str.append(String.valueOf(shift).repeat(Math.max(0, shiftCount))).append("]");

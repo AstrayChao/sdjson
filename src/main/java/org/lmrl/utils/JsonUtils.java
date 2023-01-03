@@ -1,8 +1,5 @@
 package org.lmrl.utils;
 
-import org.lmrl.enums.ValueType;
-import org.lmrl.type.JsonValue;
-
 public class JsonUtils {
     public static String unescapeString(String s) {
         final StringBuilder b = new StringBuilder();
@@ -42,34 +39,37 @@ public class JsonUtils {
     }
 
     public static String escapeString(String str) {
-        StringBuilder sb = new StringBuilder("\"");
-        for (char c : str.toCharArray())
-            sb.append(switch (c) {
-                case '\\', '"', '/' -> "\\" + c;
-                case '\b' -> "\\b";
-                case '\t' -> "\\t";
-                case '\n' -> "\\n";
-                case '\f' -> "\\f";
-                case '\r' -> "\\r";
-                default -> c < ' ' ? String.format("\\u%04x", c) : c;
-            });
-        return sb.append('"').toString();
-    }
-
-    public static boolean isWhitespace(String content) {
-        for (char c : content.toCharArray()) {
-            switch (c) {
-                case ' ', '\t', '\n', 'r' -> {
-                }
+        StringBuilder sb = new StringBuilder(str);
+        for (int i = 0; i + 1 < sb.length(); i++) {
+            if (sb.charAt(i) != '\\') {
+                continue;
+            }
+            String replaceStr;
+            switch (sb.charAt(i + 1)) {
+                case '"' -> replaceStr = "\"";
+                case '\\' -> replaceStr = "\\";
+                case 'b' -> replaceStr = "\b";
+                case 'f' -> replaceStr = "\f";
+                case 'r' -> replaceStr = "\r";
+                case 't' -> replaceStr = "\t";
                 default -> {
-                    return true;
+                    return "";
                 }
             }
+            sb.replace(i, i + 2, replaceStr);
         }
-        return false;
-    }
-
-    public static JsonValue invalidValue() {
-        return new JsonValue(ValueType.Invalid, null);
+        return sb.toString();
+//        StringBuilder sb = new StringBuilder("\"");
+//        for (char c : str.toCharArray())
+//            sb.append(switch (c) {
+//                case '\\', '"', '/' -> "\\" + c;
+//                case '\b' -> "\\b";
+//                case '\t' -> "\\t";
+//                case '\n' -> "\\n";
+//                case '\f' -> "\\f";
+//                case '\r' -> "\\r";
+//                default -> c < ' ' ? String.format("\\u%04x", c) : c;
+//            });
+//        return sb.append('"').toString();
     }
 }

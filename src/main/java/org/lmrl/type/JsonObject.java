@@ -27,6 +27,10 @@ public class JsonObject {
         this.rawObject = rawObject;
     }
 
+    public Map<String, JsonValue> toMap() {
+        return rawObject;
+    }
+
     // 考虑用Function或者Predicate去做统一的抽象, 但是使用太麻烦...故写多个版本的get函数
     public int get(String key, int defaultValues) throws JsonException {
         if (contains(key)) {
@@ -152,19 +156,23 @@ public class JsonObject {
     }
 
     public String format() {
-        return format(true, "    ", 0);
+        return format(false, "    ", 0);
     }
 
-    public String format(boolean sorted, String shift, int shiftCount) {
+    public String format(boolean keySorted) {
+        return format(keySorted, "    ", 0);
+    }
+
+    public String format(boolean keySorted, String shift, int shiftCount) {
         StringBuilder str = new StringBuilder();
         str.append("{");
         BiConsumer<String, JsonValue> appendConsumer = (String key, JsonValue val) ->
                 str.append("\n")
                         .append(String.valueOf(shift).repeat(Math.max(0, shiftCount + 1)))
                         .append("\"").append(JsonUtils.unescapeString(key))
-                        .append("\": ").append(val.format(sorted, shift, shiftCount + 1)).append(",");
+                        .append("\": ").append(val.format(keySorted, shift, shiftCount + 1)).append(",");
         var iterator = rawObject.entrySet().iterator();
-        if (sorted) {
+        if (keySorted) {
             List<Map.Entry<String, JsonValue>> orderedData = new ArrayList<>();
             while (iterator.hasNext()) {
                 orderedData.add(iterator.next());

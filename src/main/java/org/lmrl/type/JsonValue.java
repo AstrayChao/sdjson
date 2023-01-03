@@ -77,27 +77,27 @@ public class JsonValue {
         return new JsonObject();
     }
 
-    public boolean contains(String key) throws JsonException {
+    public boolean contains(String key) {
         return isObject() && asObject().contains(key);
     }
 
-    public boolean contains(int pos) throws JsonException {
+    public boolean contains(int pos) {
         return isArray() && asArray().contains(pos);
     }
 
-    public JsonValue get(int pos) throws JsonException {
+    public JsonValue get(int pos) {
         return asArray().get(pos);
     }
 
-    public JsonValue find(int pos) throws JsonException {
+    public JsonValue find(int pos) {
         return isArray() ? asArray().get(pos) : null;
     }
 
-    public JsonValue get(String key) throws JsonException {
+    public JsonValue get(String key) {
         return asObject().get(key);
     }
 
-    public JsonValue find(String key) throws JsonException {
+    public JsonValue find(String key) {
         return isObject() ? asObject().get(key) : null;
     }
 
@@ -187,7 +187,15 @@ public class JsonValue {
         return new JsonArray();
     }
 
-    public String format(boolean ordered, String shift, int shiftCount) {
+    public String format() {
+        return format(false, "    ", 0);
+    }
+
+    public String format(boolean keySorted) {
+        return format(keySorted, "    ", 0);
+    }
+
+    public String format(boolean keySorted, String shift, int shiftCount) {
         switch (type) {
             case Null -> {
                 return "null";
@@ -199,10 +207,10 @@ public class JsonValue {
                 return '"' + rawData.toString() + '"';
             }
             case Array -> {
-                return asArray().format(ordered, shift, shiftCount);
+                return asArray().format(keySorted, shift, shiftCount);
             }
             case Object -> {
-                return asObject().format(ordered, shift, shiftCount);
+                return asObject().format(keySorted, shift, shiftCount);
             }
             default -> {
                 return "";
