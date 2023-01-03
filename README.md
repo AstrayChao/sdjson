@@ -6,9 +6,8 @@ Just a Toy Json Parser...
 
 JDK17
 
-coming soon
+```
+    String your_json_content="your_json_content";
+    JsonValue jsonContent = Parser.parse(your_json_content);
+```
 
-### TODO
-
-- [ ] parser
-- [x] JsonArray实现

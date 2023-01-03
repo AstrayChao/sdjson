@@ -27,6 +27,9 @@ public class Parser {
     }
 
     public static JsonValue parse(String content) {
+        if (content == null || content.isBlank()) {
+            return new JsonValue();
+        }
         return new Parser(content).parse();
     }
 
